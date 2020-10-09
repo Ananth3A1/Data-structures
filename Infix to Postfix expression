@@ -1,0 +1,138 @@
+#include <stdio.h>
+# define MAX 100
+char stack[MAX];
+int top=-1;
+
+void push(char ch)
+{
+    if (top==MAX-1)
+        printf("Stack is full\n");
+    else
+    {
+        top++;
+        stack[top]=ch;
+    }
+}
+char pop()
+{
+    char item;
+    if (top==-1)
+        printf("\n stack is empty !");
+    else
+    {
+        item=stack[top];
+        top--;
+        return item;
+    }
+
+}
+
+int stackempty()
+{
+    if(top==-1) return 1;
+    else return 0;
+}
+
+char stacktop()
+{
+    if( top==-1)
+        printf("\n stack is empty!");
+    else
+        return stack[top];
+}
+int priority(char ch)
+{
+    switch(ch)
+    {
+        case '+':
+        case '-':return (1);
+        case '*':
+        case '/':return (2);
+        default : return (0);
+    }
+}
+
+
+
+int main(int argc, char **argv)
+{
+	char infix[100];
+	char postfix[100];
+    int i, item;
+    printf("Enter the infix expression :");
+    scanf("%s",infix);
+    printf("Expression : %s",infix);
+    printf("\n Postfix: ");
+    i=0;
+    int k=0;
+    int a,b;
+    int invalid = 0;
+     while (infix[i]!='\0')
+    {
+            if(infix[i+1]=='\0')
+            {
+                if((infix[i]=='*' || infix[i]=='+' || infix[i] == '/' || infix[i] == '-'))
+                   invalid = 1;
+            }
+            if(infix[i]=='(')
+            {
+                push(infix[i]);
+                a = i;
+            }
+            else if(infix[i]==')')
+            {
+                while(( item=pop())!='(')
+                {
+
+                    postfix[k] = item;
+                    k++;
+                }
+                b = i;
+                int q,ot_count,op_count;
+                for(q=a+1;q<b;q++)
+                {
+                    if(infix[q]=='*' || infix[q]=='+' || infix[q] == '/' || infix[q] == '-' )
+                        ot_count++;
+                    else
+                        op_count++;
+                }
+                if(ot_count>=op_count)
+                    invalid = 1;
+            }
+            else if(infix[i]=='*' || infix[i]=='+' || infix[i] == '/' || infix[i] == '-' )
+                {
+                    while(!stackempty() && priority(infix[i])<=priority(stacktop()))
+                    {
+                            item=pop();
+                            postfix[k] = item;
+                            k++;
+                    }
+
+                      push(infix[i]);
+                }
+            else
+            {
+                postfix[k] = infix[i];
+                k++;
+            }
+        i++;
+    }
+
+    while(!stackempty())
+    {
+        char item;
+        item=pop();
+        postfix[k] = item;
+        k++;
+    }
+    int j=0;
+    if(invalid==1)
+        printf("Invalid expression\n");
+    else{
+        for(j=0;j<k;j++)
+            printf("%c",postfix[j]);
+    }
+    printf("\n");
+    return 0;
+
+}
